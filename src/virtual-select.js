@@ -59,6 +59,7 @@ const dataProps = [
   'setValueAsArray',
   'showDropboxAsPopup',
   'showOptionsOnlyOnSearch',
+  'matchSearchByStart',
   'showSelectedOptionsFirst',
   'showValueAsTags',
   'silentInitialValueSet',
@@ -724,6 +725,7 @@ export class VirtualSelect {
     this.showDropboxAsPopup = convertToBoolean(options.showDropboxAsPopup);
     this.hideValueTooltipOnSelectAll = convertToBoolean(options.hideValueTooltipOnSelectAll);
     this.showOptionsOnlyOnSearch = convertToBoolean(options.showOptionsOnlyOnSearch);
+    this.matchSearchByStart = convertToBoolean(options.matchSearchByStart);
     this.selectAllOnlyVisible = convertToBoolean(options.selectAllOnlyVisible);
     this.alwaysShowSelectedOptionsCount = convertToBoolean(options.alwaysShowSelectedOptionsCount);
     this.disableAllOptionsSelectedText = convertToBoolean(options.disableAllOptionsSelectedText);
@@ -1444,7 +1446,7 @@ export class VirtualSelect {
     let visibleOptionsCount = 0;
     let hasExactOption = false;
     let visibleOptionGroupsMapping;
-    const { searchValue, searchGroup, showOptionsOnlyOnSearch } = this;
+    const { searchValue, searchGroup, showOptionsOnlyOnSearch, matchSearchByStart } = this;
     const isOptionVisible = this.isOptionVisible.bind(this);
 
     if (this.hasOptionGroup) {
@@ -1457,9 +1459,14 @@ export class VirtualSelect {
       }
 
       let result;
-
-      if (showOptionsOnlyOnSearch && !searchValue) {
+      if (matchSearchByStart && !(d.label.toLowerCase().startsWith(searchValue))) {
         // eslint-disable-next-line no-param-reassign
+        d.isVisible = false;
+        result = {
+          isVisible: false,
+          hasExactOption: false,
+        };
+      } else if ( showOptionsOnlyOnSearch && !searchValue ) {
         d.isVisible = false;
         result = {
           isVisible: false,

@@ -62,6 +62,7 @@
 | disableValidation | Boolean | false | Disable required validation |
 | useGroupValue | Boolean | false | Group's value would be returned when all of its child options selected |
 | maxWidth | String | 250px | Maximum width for the select element |
+| matchSearchByStart | Boolean | false | Filter search results with start digits |
 
 # Text Properties
 

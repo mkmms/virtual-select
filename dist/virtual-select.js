@@ -563,7 +563,7 @@ var keyDownMethodMapping = {
 };
 var valueLessProps = ['autofocus', 'disabled', 'multiple', 'required'];
 var nativeProps = ['autofocus', 'class', 'disabled', 'id', 'multiple', 'name', 'placeholder', 'required'];
-var dataProps = ['additionalClasses', 'aliasKey', 'allOptionsSelectedText', 'allowNewOption', 'alwaysShowSelectedOptionsCount', 'ariaLabelledby', 'autoSelectFirstOption', 'clearButtonText', 'descriptionKey', 'disableAllOptionsSelectedText', 'disableOptionGroupCheckbox', 'disableSelectAll', 'disableValidation', 'dropboxWidth', 'dropboxWrapper', 'emptyValue', 'enableSecureText', 'hasOptionDescription', 'hideClearButton', 'hideValueTooltipOnSelectAll', 'keepAlwaysOpen', 'labelKey', 'markSearchResults', 'maxValues', 'maxWidth', 'moreText', 'noOfDisplayValues', 'noOptionsText', 'noSearchResultsText', 'optionHeight', 'optionSelectedText', 'optionsCount', 'optionsSelectedText', 'popupDropboxBreakpoint', 'popupPosition', 'position', 'search', 'searchGroup', 'searchPlaceholderText', 'selectAllOnlyVisible', 'selectAllText', 'setValueAsArray', 'showDropboxAsPopup', 'showOptionsOnlyOnSearch', 'showSelectedOptionsFirst', 'showValueAsTags', 'silentInitialValueSet', 'textDirection', 'tooltipAlignment', 'tooltipFontSize', 'tooltipMaxWidth', 'useGroupValue', 'valueKey', 'zIndex'];
+var dataProps = ['additionalClasses', 'aliasKey', 'allOptionsSelectedText', 'allowNewOption', 'alwaysShowSelectedOptionsCount', 'ariaLabelledby', 'autoSelectFirstOption', 'clearButtonText', 'descriptionKey', 'disableAllOptionsSelectedText', 'disableOptionGroupCheckbox', 'disableSelectAll', 'disableValidation', 'dropboxWidth', 'dropboxWrapper', 'emptyValue', 'enableSecureText', 'hasOptionDescription', 'hideClearButton', 'hideValueTooltipOnSelectAll', 'keepAlwaysOpen', 'labelKey', 'markSearchResults', 'maxValues', 'maxWidth', 'moreText', 'noOfDisplayValues', 'noOptionsText', 'noSearchResultsText', 'optionHeight', 'optionSelectedText', 'optionsCount', 'optionsSelectedText', 'popupDropboxBreakpoint', 'popupPosition', 'position', 'search', 'searchGroup', 'searchPlaceholderText', 'selectAllOnlyVisible', 'selectAllText', 'setValueAsArray', 'showDropboxAsPopup', 'showOptionsOnlyOnSearch', 'matchSearchByStart', 'showSelectedOptionsFirst', 'showValueAsTags', 'silentInitialValueSet', 'textDirection', 'tooltipAlignment', 'tooltipFontSize', 'tooltipMaxWidth', 'useGroupValue', 'valueKey', 'zIndex'];
 /** Class representing VirtualSelect */
 
 var VirtualSelect = /*#__PURE__*/function () {
@@ -1226,6 +1226,7 @@ var VirtualSelect = /*#__PURE__*/function () {
       this.showDropboxAsPopup = convertToBoolean(options.showDropboxAsPopup);
       this.hideValueTooltipOnSelectAll = convertToBoolean(options.hideValueTooltipOnSelectAll);
       this.showOptionsOnlyOnSearch = convertToBoolean(options.showOptionsOnlyOnSearch);
+      this.matchSearchByStart = convertToBoolean(options.matchSearchByStart);
       this.selectAllOnlyVisible = convertToBoolean(options.selectAllOnlyVisible);
       this.alwaysShowSelectedOptionsCount = convertToBoolean(options.alwaysShowSelectedOptionsCount);
       this.disableAllOptionsSelectedText = convertToBoolean(options.disableAllOptionsSelectedText);
@@ -1990,7 +1991,8 @@ var VirtualSelect = /*#__PURE__*/function () {
       var visibleOptionGroupsMapping;
       var searchValue = this.searchValue,
           searchGroup = this.searchGroup,
-          showOptionsOnlyOnSearch = this.showOptionsOnlyOnSearch;
+          showOptionsOnlyOnSearch = this.showOptionsOnlyOnSearch,
+          matchSearchByStart = this.matchSearchByStart;
       var isOptionVisible = this.isOptionVisible.bind(this);
 
       if (this.hasOptionGroup) {
@@ -2004,8 +2006,14 @@ var VirtualSelect = /*#__PURE__*/function () {
 
         var result;
 
-        if (showOptionsOnlyOnSearch && !searchValue) {
+        if (matchSearchByStart && !d.label.toLowerCase().startsWith(searchValue)) {
           // eslint-disable-next-line no-param-reassign
+          d.isVisible = false;
+          result = {
+            isVisible: false,
+            hasExactOption: false
+          };
+        } else if (showOptionsOnlyOnSearch && !searchValue) {
           d.isVisible = false;
           result = {
             isVisible: false,
